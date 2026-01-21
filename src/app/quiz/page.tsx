@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
+import { Loader2 } from 'lucide-react'
 import { quizQuestions } from '@/data/quiz-questions'
 
 export default function QuizPage() {
@@ -14,6 +15,7 @@ export default function QuizPage() {
   const [tempSelected, setTempSelected] = useState<number | null>(null)
   const [isAnimating, setIsAnimating] = useState(false)
   const [direction, setDirection] = useState<'forward' | 'backward'>('forward')
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   useEffect(() => {
     // 检查是否有邀请码
@@ -55,6 +57,8 @@ export default function QuizPage() {
       return
     }
 
+    setIsSubmitting(true)
+
     try {
       const response = await fetch('/api/quiz/submit', {
         method: 'POST',
@@ -71,6 +75,7 @@ export default function QuizPage() {
       if (!response.ok) {
         const error = await response.json()
         alert(error.error || '提交失败')
+        setIsSubmitting(false)
         return
       }
 
@@ -81,6 +86,7 @@ export default function QuizPage() {
       router.push(`/result/${data.id}`)
     } catch (error) {
       alert('网络错误，请稍后重试')
+      setIsSubmitting(false)
     }
   }
 
@@ -101,6 +107,17 @@ export default function QuizPage() {
   return (
     <main className="min-h-screen bg-gradient-to-br from-violet-50 via-purple-50 to-indigo-50 py-8">
       <div className="container mx-auto px-4 max-w-2xl">
+        {/* 提交中的 Loading 遮罩 */}
+        {isSubmitting && (
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+            <div className="bg-white rounded-2xl shadow-2xl p-8 text-center space-y-4">
+              <Loader2 className="w-16 h-16 animate-spin text-primary mx-auto" />
+              <h3 className="text-2xl font-bold text-gray-800">正在分析你的炒股人格...</h3>
+              <p className="text-gray-600">请稍候，马上就好</p>
+            </div>
+          </div>
+        )}
+
         {/* 头部进度 */}
         <div className="mb-8 space-y-2">
           <div className="flex items-center justify-between text-sm">
@@ -136,8 +153,9 @@ export default function QuizPage() {
                   return (
                     <button
                       key={index}
-                      onClick={() => handleAnswer(index)}
-                      className={`w-full text-left p-4 rounded-lg border-2 transition-all duration-200 hover:shadow-md ${
+                      onClick={() => !isSubmitting && handleAnswer(index)}
+                      disabled={isSubmitting}
+                      className={`w-full text-left p-4 rounded-lg border-2 transition-all duration-200 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed ${
                         isSelected
                           ? 'border-primary bg-primary/10 shadow-md'
                           : 'border-border hover:border-primary hover:bg-primary/5'

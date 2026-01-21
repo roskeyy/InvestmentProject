@@ -1,0 +1,50 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id           String    @id @default(uuid())
+  username     String    @unique
+  passwordHash String    @map("password_hash")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+  createdCodes InviteCode[]
+
+  @@map("admins")
+}
+
+model InviteCode {
+  id          String    @id @default(uuid())
+  code        String    @unique
+  isActive    Boolean   @default(true) @map("is_active")
+  maxUses     Int       @default(100) @map("max_uses")
+  usedCount   Int       @default(0) @map("used_count")
+  validFrom   DateTime  @default(now()) @map("valid_from")
+  validUntil  DateTime? @map("valid_until")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  createdBy   String?   @map("created_by")
+  creator     Admin?    @relation(fields: [createdBy], references: [id])
+  testRecords TestRecord[]
+
+  @@map("invite_codes")
+}
+
+model TestRecord {
+  id               String   @id @default(uuid())
+  inviteCodeId     String   @map("invite_code_id")
+  inviteCode       InviteCode @relation(fields: [inviteCodeId], references: [id])
+  answers          Json     @db.JsonB
+  personalityType  String   @map("personality_type")
+  scores           Json     @db.JsonB
+  ipAddress        String?  @map("ip_address")
+  userAgent        String?  @map("user_agent")
+  posterUrl        String?  @map("poster_url")
+  completedAt      DateTime @default(now()) @map("completed_at")
+
+  @@map("test_records")
+}

@@ -20,11 +20,6 @@ if ! command -v pm2 &> /dev/null; then
     sudo npm install -g pm2
 fi
 
-# 3. 安装 Chrome/Chromium (Puppeteer 依赖)
-echo "安装 Chromium 浏览器..."
-sudo apt-get update
-sudo apt-get install -y chromium-browser
-
 # 4. 配置 npm 使用国内镜像（加速国内服务器）
 echo "配置 npm 镜像源..."
 npm config set registry https://registry.npmmirror.com
@@ -35,11 +30,7 @@ echo "开始时间: $(date '+%Y-%m-%d %H:%M:%S')"
 
 PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
 PUPPETEER_SKIP_DOWNLOAD=true \
-npm install \
-  --progress=true \
-  --loglevel=http \
-  --timing=true
-
+npm install 
 echo "完成时间: $(date '+%Y-%m-%d %H:%M:%S')"
 echo "✅ 依赖安装完成"
 
@@ -73,12 +64,3 @@ echo "部署完成！"
 echo "应用运行在: http://localhost:3000"
 echo "后台管理: http://localhost:3000/admin/login"
 echo "默认管理员账号: admin / admin123"
-
-# 13. 配置 Nginx (提示)
-echo ""
-echo "请配置 Nginx 反向代理："
-echo "1. 复制 deploy/nginx.conf 到 /etc/nginx/sites-available/pricesignal"
-echo "2. 修改 server_name 为你的域名"
-echo "3. 创建软链接: sudo ln -s /etc/nginx/sites-available/pricesignal /etc/nginx/sites-enabled/"
-echo "4. 测试配置: sudo nginx -t"
-echo "5. 重载 Nginx: sudo systemctl reload nginx"

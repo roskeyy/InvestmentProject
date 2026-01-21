@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken'
 
-const JWT_SECRET = process.env.JWT_SECRET || 'aMUakAbzH2TCxw8G3fpA_j-97ihPtC3Aliql_qAY8rQ'
+const JWT_SECRET = process.env.JWT_SECRET || 'change-this-secret-in-production'
 const JWT_ALGORITHM = process.env.JWT_ALGORITHM || 'HS256'
 const ACCESS_TOKEN_EXPIRE_MINUTES = parseInt(process.env.ACCESS_TOKEN_EXPIRE_MINUTES || '10080')
 

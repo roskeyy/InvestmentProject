@@ -5,7 +5,9 @@ const prisma = new PrismaClient()
 
 async function main() {
   // 创建默认管理员
-  const hashedPassword = await bcrypt.hash('20010626syw', 10)
+  // 生产环境请使用环境变量 ADMIN_PASSWORD 或在部署后立即修改密码
+  const defaultPassword = process.env.ADMIN_PASSWORD || 'admin123456'
+  const hashedPassword = await bcrypt.hash(defaultPassword, 10)
   const admin = await prisma.admin.upsert({
     where: { username: 'admin' },
     update: {},
@@ -15,6 +17,7 @@ async function main() {
     },
   })
   console.log('Created admin:', admin.username)
+  console.log('Default password:', defaultPassword)
 
   // 创建一些测试邀请码
   const inviteCodes = [

@@ -28,10 +28,8 @@ sudo apt-get install -y chromium-browser
 # 4. 配置 npm 使用国内镜像（加速国内服务器）
 echo "配置 npm 镜像源..."
 npm config set registry https://registry.npmmirror.com
-npm config set puppeteer_download_host https://npmmirror.com/mirrors
-npm config set puppeteer_chromium_download_host https://npmmirror.com/mirrors
 
-# 5. 安装项目依赖（使用国内镜像）
+# 5. 安装项目依赖（使用国内镜像和跳过 Puppeteer 下载）
 echo "安装项目依赖..."
 PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
 PUPPETEER_SKIP_DOWNLOAD=true \

@@ -30,10 +30,18 @@ echo "配置 npm 镜像源..."
 npm config set registry https://registry.npmmirror.com
 
 # 5. 安装项目依赖（使用国内镜像和跳过 Puppeteer 下载）
-echo "安装项目依赖..."
+echo "安装项目依赖（可能需要几分钟）..."
+echo "开始时间: $(date '+%Y-%m-%d %H:%M:%S')"
+
 PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
 PUPPETEER_SKIP_DOWNLOAD=true \
-npm install
+npm install \
+  --progress=true \
+  --loglevel=http \
+  --timing=true
+
+echo "完成时间: $(date '+%Y-%m-%d %H:%M:%S')"
+echo "✅ 依赖安装完成"
 
 # 6. 构建 Prisma
 echo "构建 Prisma..."

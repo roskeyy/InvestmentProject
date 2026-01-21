@@ -20,33 +20,40 @@ if ! command -v pm2 &> /dev/null; then
     sudo npm install -g pm2
 fi
 
-# 3. 安装依赖
+# 3. 安装 Chrome/Chromium (Puppeteer 依赖)
+echo "安装 Chromium 浏览器..."
+sudo apt-get update
+sudo apt-get install -y chromium-browser
+
+# 4. 安装项目依赖（跳过 Puppeteer Chrome 下载）
 echo "安装项目依赖..."
+PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
+PUPPETEER_SKIP_DOWNLOAD=true \
 npm install
 
-# 4. 构建 Prisma
+# 5. 构建 Prisma
 echo "构建 Prisma..."
 npx prisma generate
 
-# 5. 推送数据库 schema
+# 6. 推送数据库 schema
 echo "推送数据库 schema..."
 npx prisma db push
 
-# 6. (可选) 初始化数据
+# 7. (可选) 初始化数据
 # npx tsx prisma/seed.ts
 
-# 7. 构建应用
+# 8. 构建应用
 echo "构建 Next.js 应用..."
 npm run build
 
-# 8. 创建日志目录
+# 9. 创建日志目录
 mkdir -p logs
 
-# 9. 启动/重启 PM2
+# 10. 启动/重启 PM2
 echo "启动 PM2..."
 pm2 restart ecosystem.config.js || pm2 start ecosystem.config.js
 
-# 10. 保存 PM2 配置
+# 11. 保存 PM2 配置
 pm2 save
 pm2 startup
 
@@ -55,7 +62,7 @@ echo "应用运行在: http://localhost:3000"
 echo "后台管理: http://localhost:3000/admin/login"
 echo "默认管理员账号: admin / admin123"
 
-# 11. 配置 Nginx (提示)
+# 12. 配置 Nginx (提示)
 echo ""
 echo "请配置 Nginx 反向代理："
 echo "1. 复制 deploy/nginx.conf 到 /etc/nginx/sites-available/pricesignal"

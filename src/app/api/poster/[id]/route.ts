@@ -10,7 +10,8 @@ export const dynamic = 'force-dynamic'
 async function generatePosterImage(testRecord: any, personality: any, scores: any) {
   const browser = await puppeteer.launch({
     headless: true,
-    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    executablePath: '/usr/bin/chromium-browser',
+    args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
   })
 
   try {
